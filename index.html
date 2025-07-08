@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>وصفتي | النسخة الاحترافية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Replaced Font Awesome with Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --font-title: 'Lalezar', cursive;
+            --font-body: 'Tajawal', sans-serif;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.07);
+            --shadow-md: 0 5px 15px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+            --radius-md: 16px;
+            --radius-lg: 24px;
+        }
+
+        /* --- THEMES --- */
+        /* 1. Dawn Symphony (Default) */
+        .theme-dawn {
+            --bg-primary: #F4F8FF;
+            --bg-secondary: #FFFFFF;
+            --text-primary: #1A2E4C;
+            --text-secondary: #6A7891;
+            --accent-primary: #4A85E9;
+            --accent-secondary: #89B5F7;
+            --accent-gradient: linear-gradient(135deg, #4A85E9, #3A70D1);
+            --accent-red: #E74C3C;
+        }
+        /* 2. Oasis Noon */
+        .theme-oasis {
+            --bg-primary: #FCF9F3;
+            --bg-secondary: #FFFFFF;
+            --text-primary: #4C3B2A;
+            --text-secondary: #8D7760;
+            --accent-primary: #16A085;
+            --accent-secondary: #6BDFC8;
+            --accent-gradient: linear-gradient(135deg, #1ABC9C, #16A085);
+            --accent-red: #C0392B;
+        }
+        /* 3. Sunset Hues */
+        .theme-sunset {
+            --bg-primary: #FFF4F8;
+            --bg-secondary: #FFFFFF;
+            --text-primary: #4A2E4C;
+            --text-secondary: #8D6A8D;
+            --accent-primary: #9B59B6;
+            --accent-secondary: #D6A2E8;
+            --accent-gradient: linear-gradient(135deg, #9B59B6, #8E44AD);
+            --accent-red: #E74C3C;
+        }
+        /* 4. Midnight Silence */
+        .theme-midnight {
+            --bg-primary: #1A202C;
+            --bg-secondary: #2D3748;
+            --text-primary: #E2E8F0;
+            --text-secondary: #A0AEC0;
+            --accent-primary: #4299E1;
+            --accent-secondary: #63B3ED;
+            --accent-gradient: linear-gradient(135deg, #4299E1, #3182CE);
+            --accent-red: #F56565;
+        }
+
+        /* --- Base & Structure --- */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+        }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            max-height: 900px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            background-color: var(--bg-primary);
+            padding-bottom: 75px; /* Space for bottom nav */
+        }
+        .screen.active { opacity: 1; visibility: visible; z-index: 1; }
+
+        .app-header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .app-header h1 {
+            font-family: var(--font-title);
+            font-size: 26px;
+            color: var(--text-primary);
+        }
+        .header-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 26px; /* Increased icon size */
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s, color 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .header-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--text-primary);
+        }
+
+        .app-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0 20px;
+        }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        /* --- Ripple Effect --- */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 75px;
+            background-color: var(--bg-secondary);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.2s ease;
+            padding: 10px;
+            border-radius: var(--radius-md);
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-item i {
+            font-size: 28px; /* Increased icon size */
+            width: 32px;
+            text-align: center;
+            transition: font-weight 0.2s;
+        }
+        .nav-item.active {
+            color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+        .nav-item.active i {
+            font-weight: bold; /* Use bold for active state */
+        }
+
+        /* --- Setup Screen --- */
+        #setup-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 25px;
+            z-index: 1001;
+        }
+        #setup-screen .logo {
+            font-family: var(--font-title); 
+            font-size: 64px; 
+            color: var(--accent-primary); 
+            margin-bottom: 20px;
+        }
+        #setup-screen p { 
+            font-size: 18px; 
+            color: var(--text-secondary); 
+            margin-bottom: 40px; 
+        }
+        #family-name-input {
+            width: 100%; 
+            padding: 18px;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 18px; 
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: var(--font-body);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn {
+            padding: 18px 35px;
+            background: var(--accent-gradient);
+            border: none; 
+            border-radius: var(--radius-md);
+            color: white; 
+            font-size: 18px; 
+            font-weight: 700;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: var(--shadow-lg);
+        }
+        .btn-secondary {
+            background: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        /* --- Main Screen & Recipe Cards --- */
+        .add-recipe-fab {
+            position: absolute;
+            bottom: 95px; /* Above nav bar */
+            left: 30px;
+            width: 60px; 
+            height: 60px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            color: white; 
+            font-size: 36px; /* Increased icon size */
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            z-index: 99;
+            border: none;
+            overflow: hidden;
+        }
+        .add-recipe-fab:hover { 
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+        }
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding-bottom: 20px;
+        }
+        .recipe-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .recipe-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: var(--shadow-lg);
+        }
+        .recipe-card img { 
+            width: 100%; 
+            height: 120px; 
+            object-fit: cover;
+        }
+        .recipe-card-title { 
+            padding: 15px; 
+            font-size: 16px; 
+            font-weight: 700; 
+            text-align: center; 
+            color: var(--text-primary);
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Recipe View Screen --- */
+        #recipe-view-screen .app-content { padding: 0; }
+        .recipe-view-header {
+            position: relative;
+            height: 300px;
+        }
+        .recipe-view-header img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover;
+        }
+        .recipe-view-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(to top, var(--bg-primary), transparent);
+        }
+        .recipe-view-header .back-btn {
+            position: absolute; 
+            top: 20px; 
+            right: 20px;
+            width: 44px; 
+            height: 44px;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            color: white;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            transition: background 0.3s ease;
+            z-index: 2;
+            border: 1px solid rgba(255,255,255,0.2);
+            overflow: hidden;
+        }
+        .recipe-view-header .back-btn:hover {
+            background: rgba(0,0,0,0.5);
+        }
+        .recipe-view-content { 
+            padding: 20px; 
+            background: var(--bg-primary);
+            transform: translateY(-50px);
+            border-top-left-radius: var(--radius-lg);
+            border-top-right-radius: var(--radius-lg);
+            position: relative;
+        }
+        .recipe-view-title { 
+            font-size: 32px; 
+            font-family: var(--font-title);
+            margin-bottom: 25px; 
+            color: var(--text-primary);
+        }
+        .section-title { 
+            font-size: 22px; 
+            font-weight: 700; 
+            margin-bottom: 20px; 
+            padding-bottom: 8px; 
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title i {
+            color: var(--accent-primary);
+            font-size: 24px;
+        }
+        .ingredients-list, .steps-list { 
+            list-style: none; 
+            padding-right: 0; 
+            margin-bottom: 30px; 
+        }
+        .ingredients-list li { 
+            margin-bottom: 12px; 
+            font-size: 17px; 
+            line-height: 1.7; 
+            color: var(--text-secondary);
+            padding: 10px 15px;
+            border-radius: 12px;
+            background-color: var(--bg-secondary);
+            box-shadow: var(--shadow-sm);
+        }
+        .steps-list { 
+            counter-reset: step-counter; 
+        }
+        .steps-list li { 
+            counter-increment: step-counter; 
+            position: relative;
+            margin-bottom: 15px;
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--text-primary);
+            background-color: var(--bg-secondary);
+            padding: 15px 20px 15px 55px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+        .steps-list li::before { 
+            content: counter(step-counter); 
+            background: var(--accent-gradient); 
+            color: white; 
+            font-weight: bold; 
+            border-radius: 50%; 
+            width: 32px; 
+            height: 32px; 
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .recipe-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .recipe-actions .btn {
+            padding: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .recipe-actions .btn.btn-edit {
+            background: var(--accent-secondary);
+        }
+        .recipe-actions .btn i { font-size: 20px; }
+
+        /* --- Groups & Shopping List & Search --- */
+        .page-header {
+            padding: 0 20px 20px 20px;
+        }
+        .page-header h2 {
+            font-size: 32px;
+            font-family: var(--font-title);
+        }
+        .group-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .group-card-info { cursor: pointer; flex-grow: 1; }
+        .group-card h3 { font-size: 20px; margin-bottom: 5px; color: var(--text-primary); }
+        .group-card p { color: var(--text-secondary); font-size: 14px; }
+        .group-card-actions button {
+            background: none; border: none; color: var(--text-secondary);
+            font-size: 22px; cursor: pointer; padding: 8px; transition: color 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            border-radius: 50%;
+        }
+        .group-card-actions button:hover { color: var(--accent-primary); }
+        .add-group-btn {
+            display: block; width: 100%; padding: 20px; background: transparent;
+            border: 2px dashed var(--text-secondary); border-radius: var(--radius-lg);
+            text-align: center; color: var(--text-secondary); font-size: 16px; font-weight: 700;
+            cursor: pointer; transition: all 0.2s ease; margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .add-group-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+        .shopping-item {
+            display: flex; align-items: center; padding: 15px;
+            background-color: var(--bg-secondary); border-radius: var(--radius-md);
+            margin-bottom: 12px; box-shadow: var(--shadow-sm);
+        }
+        .shopping-item input[type="checkbox"] {
+            margin-left: 15px; width: 22px; height: 22px;
+            accent-color: var(--accent-primary); cursor: pointer;
+        }
+        .shopping-item label { flex-grow: 1; font-size: 17px; color: var(--text-primary); }
+        .shopping-item.checked label { text-decoration: line-through; color: var(--text-secondary); }
+        .shopping-list-actions { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
+        .shopping-list-actions .btn { width: 100%; padding: 15px; }
+        .shopping-list-actions .btn-clear-checked { background: var(--text-secondary); }
+        .shopping-list-actions .btn-clear-all { background: var(--accent-red); }
+
+        #ingredients-search {
+            width: 100%; padding: 18px; background: var(--bg-secondary);
+            border: 1px solid rgba(0,0,0,0.05); border-radius: var(--radius-md);
+            font-size: 16px; margin-bottom: 20px; box-shadow: var(--shadow-sm);
+            color: var(--text-primary);
+        }
+        #perform-search-btn { width: 100%; }
+
+        /* --- Modals --- */
+        .modal-overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); 
+            display: flex; justify-content: center; align-items: center; 
+            padding: 20px; opacity: 0; visibility: hidden; 
+            transition: all 0.3s ease; z-index: 1000; 
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content { 
+            background: var(--bg-primary); padding: 25px; border-radius: var(--radius-lg); 
+            width: 100%; transform: scale(0.95) translateY(20px); 
+            transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); 
+            max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg);
+        }
+        .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
+        .modal-content h2 { 
+            font-size: 24px; margin-bottom: 25px; font-weight: 700; 
+            color: var(--text-primary); text-align: center;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { 
+            display: block; font-weight: 700; margin-bottom: 10px; 
+            color: var(--text-primary); font-size: 14px;
+        }
+        .form-group input, .form-group textarea, .form-group select { 
+            width: 100%; padding: 15px; background: var(--bg-secondary); 
+            border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; 
+            color: var(--text-primary); font-size: 16px; font-family: var(--font-body); 
+            box-shadow: var(--shadow-sm);
+        }
+        .form-group textarea { min-height: 120px; resize: vertical; }
+        .modal-buttons { display: flex; gap: 15px; margin-top: 25px; }
+        .modal-buttons button { flex-grow: 1; padding: 15px; }
+        #delete-recipe-btn { background: var(--accent-red); }
+
+        /* Settings Modal & Toggle Switch */
+        .theme-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .theme-option {
+            padding: 15px;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--bg-secondary);
+            cursor: pointer;
+            transition: border-color 0.3s, transform 0.2s;
+            text-align: center;
+            background-color: var(--bg-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+        .theme-option.active {
+            border-color: var(--accent-primary);
+            transform: scale(1.05);
+        }
+        .theme-preview {
+            display: flex;
+            height: 40px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .theme-preview div { flex: 1; }
+        .theme-option p { font-weight: 700; color: var(--text-primary); }
+        .toggle-switch-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-secondary);
+            padding: 15px;
+            border-radius: var(--radius-md);
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--text-secondary);
+            transition: .4s;
+            border-radius: 28px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--accent-primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
+        
+        /* Empty state styles */
+        .empty-state {
+            text-align: center; padding: 60px 20px; color: var(--text-secondary);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100%;
+        }
+        .empty-state i {
+            font-size: 64px; margin-bottom: 20px; color: var(--accent-secondary);
+        }
+        .empty-state h3 { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .empty-state p { font-size: 16px; margin-top: 10px; max-width: 280px; }
+
+        /* Toast Notification & Share Card */
+        #toast {
+            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+            background-color: rgba(26, 32, 44, 0.9); backdrop-filter: blur(5px);
+            color: white; padding: 12px 24px; border-radius: 25px;
+            font-size: 14px; z-index: 2000; transition: bottom 0.5s ease;
+            box-shadow: var(--shadow-lg);
+        }
+        #toast.show { bottom: 95px; }
+        #share-card {
+            position: fixed; top: -10000px; left: -10000px; width: 320px;
+            background: white; border-radius: var(--radius-lg); padding: 20px;
+            box-shadow: var(--shadow-lg); z-index: 2000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        
+        <!-- Screens -->
+        <div id="setup-screen" class="screen">
+            <div class="logo">وصفتي</div>
+            <p>أنشئ كتاب طبخ عائلتك الرقمي</p>
+            <input type="text" id="family-name-input" placeholder="مثال: مطبخ عائلة الحمداني">
+            <button id="setup-btn" class="btn">ابدأ الآن</button>
+        </div>
+
+        <div id="main-screen" class="screen">
+            <header class="app-header">
+                <button class="header-btn" id="settings-btn"><i class="ph-bold ph-gear-six"></i></button>
+                <h1 id="family-name-display"></h1>
+            </header>
+            <div class="app-content">
+                <div id="recipes-grid" class="recipes-grid"></div>
+            </div>
+            <button id="add-recipe-fab" class="add-recipe-fab"><i class="ph ph-plus"></i></button>
+        </div>
+
+        <div id="recipe-view-screen" class="screen" style="padding-bottom: 0;">
+            <div class="app-content" style="padding: 0;">
+                <header class="recipe-view-header">
+                    <img id="recipe-view-img" src="" alt="Recipe Image">
+                    <div class="back-btn" id="back-to-main-btn"><i class="ph-bold ph-arrow-right"></i></div>
+                </header>
+                <div class="recipe-view-content">
+                    <h1 id="recipe-view-title"></h1>
+                    <h2 class="section-title"><i class="ph ph-carrot"></i>المكونات</h2>
+                    <ul id="recipe-view-ingredients" class="ingredients-list"></ul>
+                    <h2 class="section-title"><i class="ph ph-shoe-prints"></i>طريقة التحضير</h2>
+                    <ol id="recipe-view-steps" class="steps-list"></ol>
+                    <div class="recipe-actions">
+                        <button id="add-to-shopping-btn" class="btn"><i class="ph ph-shopping-cart-simple"></i> التسوق</button>
+                        <button id="share-recipe-btn" class="btn"><i class="ph ph-share-network"></i> مشاركة</button>
+                        <button id="edit-recipe-btn" class="btn btn-edit"><i class="ph ph-pencil-simple"></i> تعديل</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="groups-screen" class="screen">
+             <header class="app-header">
+                <div></div>
+                <h1 style="font-family: var(--font-body); font-size: 24px;">المناسبات</h1>
+            </header>
+            <div class="app-content">
+                <div id="groups-list"></div>
+                <button id="add-group-btn" class="add-group-btn"><i class="ph ph-plus"></i> إضافة مناسبة جديدة</button>
+            </div>
+        </div>
+        
+        <div id="search-screen" class="screen">
+            <header class="app-header">
+                <div></div>
+                <h1 style="font-family: var(--font-body); font-size: 24px;">ابحث عن وصفة</h1>
+            </header>
+            <div class="app-content">
+                <input type="text" id="ingredients-search" placeholder="أدخل المكونات المتوفرة (مفصولة بفاصلة)">
+                <button id="perform-search-btn" class="btn">بحث</button>
+                <div id="search-results" class="recipes-grid" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+        
+        <div id="shopping-list-screen" class="screen">
+            <header class="app-header">
+                <div></div>
+                <h1 style="font-family: var(--font-body); font-size: 24px;">قائمة التسوق</h1>
+            </header>
+            <div class="app-content">
+                <div id="shopping-list-items"></div>
+                <div class="shopping-list-actions">
+                    <button id="clear-checked-shopping-btn" class="btn btn-clear-checked">مسح العناصر المحددة</button>
+                    <button id="clear-all-shopping-btn" class="btn btn-clear-all">مسح كل القائمة</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modals -->
+        <div id="recipe-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h2 id="modal-title"></h2>
+                <input type="hidden" id="recipe-id-input">
+                <div class="form-group">
+                    <label for="recipe-title-input">اسم الطبق</label>
+                    <input type="text" id="recipe-title-input" placeholder="مثال: كبسة الدجاج">
+                </div>
+                <div class="form-group">
+                    <label for="recipe-image-input">صورة الطبق (اختياري)</label>
+                    <input type="file" id="recipe-image-input" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="recipe-group-select">المناسبة الخاصة</label>
+                    <select id="recipe-group-select"></select>
+                </div>
+                <div class="form-group">
+                    <label for="recipe-ingredients-input">المكونات (كل مكون في سطر)</label>
+                    <textarea id="recipe-ingredients-input" placeholder="مثال:&#10;دجاج كامل&#10;2 كوب أرز بسمتي"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="recipe-steps-input">خطوات التحضير (كل خطوة في سطر)</label>
+                    <textarea id="recipe-steps-input" placeholder="مثال:&#10;نقلي البصل والثوم حتى يذبل&#10;أضيفي الدجاج واقليه"></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button id="cancel-recipe-btn" class="btn btn-secondary">إلغاء</button>
+                    <button id="save-recipe-btn" class="btn">حفظ</button>
+                </div>
+                <div class="modal-buttons" style="margin-top: 10px;">
+                    <button id="delete-recipe-btn" class="btn">حذف الوصفة</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="group-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h2 id="group-modal-title"></h2>
+                <input type="hidden" id="group-id-input">
+                <div class="form-group">
+                    <label for="group-name-input">اسم المناسبة</label>
+                    <input type="text" id="group-name-input" placeholder="مثال: وصفات رمضان">
+                </div>
+                <div class="modal-buttons">
+                    <button id="cancel-group-btn" class="btn btn-secondary">إلغاء</button>
+                    <button id="save-group-btn" class="btn">حفظ</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h2>الإعدادات</h2>
+                <div class="form-group">
+                    <div class="toggle-switch-container">
+                        <label for="auto-theme-toggle">ثيم تلقائي حسب الوقت</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="auto-theme-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>تثبيت الثيم يدوياً</label>
+                    <div class="theme-options">
+                        <div class="theme-option" data-theme="dawn">
+                            <div class="theme-preview" style="background: #F4F8FF;"><div style="background: #4A85E9;"></div><div style="background: #89B5F7;"></div></div>
+                            <p>سيمفونية الفجر</p>
+                        </div>
+                        <div class="theme-option" data-theme="oasis">
+                           <div class="theme-preview" style="background: #FCF9F3;"><div style="background: #16A085;"></div><div style="background: #6BDFC8;"></div></div>
+                            <p>واحة الظهيرة</p>
+                        </div>
+                        <div class="theme-option" data-theme="sunset">
+                            <div class="theme-preview" style="background: #FFF4F8;"><div style="background: #9B59B6;"></div><div style="background: #D6A2E8;"></div></div>
+                            <p>ألوان الغروب</p>
+                        </div>
+                        <div class="theme-option" data-theme="midnight">
+                            <div class="theme-preview" style="background: #1A202C;"><div style="background: #4299E1;"></div><div style="background: #63B3ED;"></div></div>
+                            <p>سكون الليل</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="modal-buttons">
+                    <button id="close-settings-btn" class="btn">إغلاق</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirm-modal" class="modal-overlay">
+            <div class="modal-content" style="text-align: center; padding-top: 40px;">
+                <p id="confirm-message" style="font-size: 18px; color: var(--text-primary); margin-bottom: 30px; line-height: 1.6;"></p>
+                <div class="modal-buttons">
+                    <button id="confirm-cancel-btn" class="btn btn-secondary">لا</button>
+                    <button id="confirm-ok-btn" class="btn">نعم</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hidden elements -->
+        <div id="share-card" class="share-card"></div>
+        <div id="toast"></div>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <div class="nav-item" data-screen="search">
+                <i class="ph ph-magnifying-glass"></i>
+                <span>بحث</span>
+            </div>
+            <div class="nav-item" data-screen="groups">
+                <i class="ph ph-stack"></i>
+                <span>المناسبات</span>
+            </div>
+             <div class="nav-item" data-screen="shoppingList">
+                <i class="ph ph-shopping-cart-simple"></i>
+                <span>التسوق</span>
+            </div>
+            <div class="nav-item active" data-screen="main">
+                <i class="ph ph-house"></i>
+                <span>الرئيسية</span>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        (() => {
+            document.addEventListener('DOMContentLoaded', () => {
+                const getEl = (id) => document.getElementById(id);
+                const querySel = (selector) => document.querySelector(selector);
+                const querySelAll = (selector) => document.querySelectorAll(selector);
+
+                const dom = {
+                    mobileContainer: querySel('.mobile-container'),
+                    navItems: querySelAll('.nav-item'),
+                    toast: getEl('toast'),
+                    
+                    screens: {
+                        setup: getEl('setup-screen'),
+                        main: getEl('main-screen'),
+                        recipeView: getEl('recipe-view-screen'),
+                        groups: getEl('groups-screen'),
+                        search: getEl('search-screen'),
+                        shoppingList: getEl('shopping-list-screen'),
+                    },
+
+                    setup: { input: getEl('family-name-input'), btn: getEl('setup-btn') },
+                    main: { familyNameDisplay: getEl('family-name-display'), recipesGrid: getEl('recipes-grid'), addRecipeFab: getEl('add-recipe-fab'), settingsBtn: getEl('settings-btn') },
+                    recipeView: { backBtn: getEl('back-to-main-btn'), img: getEl('recipe-view-img'), title: getEl('recipe-view-title'), ingredients: getEl('recipe-view-ingredients'), steps: getEl('recipe-view-steps'), addToShoppingBtn: getEl('add-to-shopping-btn'), shareBtn: getEl('share-recipe-btn'), editBtn: getEl('edit-recipe-btn') },
+                    groups: { list: getEl('groups-list'), addBtn: getEl('add-group-btn'), recipesTitle: getEl('group-recipes-title'), recipesGrid: getEl('group-recipes-grid'), backBtn: getEl('back-from-group-recipes-btn') },
+                    shopping: { list: getEl('shopping-list-items'), clearCheckedBtn: getEl('clear-checked-shopping-btn'), clearAllBtn: getEl('clear-all-shopping-btn') },
+                    search: { input: getEl('ingredients-search'), btn: getEl('perform-search-btn'), results: getEl('search-results') },
+                    modals: { recipe: getEl('recipe-modal'), group: getEl('group-modal'), settings: getEl('settings-modal'), confirm: getEl('confirm-modal') },
+                    recipeForm: { title: getEl('modal-title'), idInput: getEl('recipe-id-input'), titleInput: getEl('recipe-title-input'), imageInput: getEl('recipe-image-input'), groupSelect: getEl('recipe-group-select'), ingredientsInput: getEl('recipe-ingredients-input'), stepsInput: getEl('recipe-steps-input'), cancelBtn: getEl('cancel-recipe-btn'), saveBtn: getEl('save-recipe-btn'), deleteBtn: getEl('delete-recipe-btn') },
+                    groupForm: { title: getEl('group-modal-title'), idInput: getEl('group-id-input'), nameInput: getEl('group-name-input'), cancelBtn: getEl('cancel-group-btn'), saveBtn: getEl('save-group-btn') },
+                    settingsForm: { autoThemeToggle: getEl('auto-theme-toggle'), themeOptions: querySelAll('.theme-option'), closeBtn: getEl('close-settings-btn') },
+                    confirmForm: { message: getEl('confirm-message'), okBtn: getEl('confirm-ok-btn'), cancelBtn: getEl('confirm-cancel-btn') },
+                    shareCard: getEl('share-card'),
+                };
+
+                let state = { recipes: [], groups: [], shoppingList: [], currentImageBase64: null, currentScreen: 'setup', previousScreen: 'main', activeRecipeId: null };
+                const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400/EBF4FF/76A9EA?text=صورة+الوصفة';
+
+                const db = {
+                    get: (key, fallback = []) => JSON.parse(localStorage.getItem(`wasfatiPro-${key}`)) || fallback,
+                    set: (key, value) => localStorage.setItem(`wasfatiPro-${key}`, JSON.stringify(value)),
+                    getString: (key, fallback = '') => localStorage.getItem(`wasfatiPro-${key}`) || fallback,
+                    setString: (key, value) => localStorage.setItem(`wasfatiPro-${key}`, value),
+                };
+
+                function init() {
+                    state = { ...state, recipes: db.get('recipes'), groups: db.get('groups'), shoppingList: db.get('shoppingList') };
+                    const familyName = db.getString('familyName');
+                    
+                    const isAutoTheme = db.getString('autoThemeEnabled', 'true') === 'true';
+                    dom.settingsForm.autoThemeToggle.checked = isAutoTheme;
+                    
+                    if (isAutoTheme) {
+                        applyTheme(getThemeForCurrentHour());
+                    } else {
+                        applyTheme(db.getString('manualTheme', 'dawn'));
+                    }
+                    
+                    if (familyName) {
+                        setupMainScreen(familyName);
+                    } else {
+                        showScreen('setup');
+                    }
+                    addEventListeners();
+                }
+
+                function setupMainScreen(familyName) {
+                    dom.main.familyNameDisplay.textContent = familyName;
+                    renderAll();
+                    showScreen('main');
+                }
+
+                function createRipple(event) {
+                    const target = event.currentTarget;
+                    const ripple = document.createElement("span");
+                    const rect = target.getBoundingClientRect();
+                    
+                    ripple.className = "ripple";
+                    ripple.style.height = ripple.style.width = `${Math.max(rect.width, rect.height)}px`;
+                    ripple.style.left = `${event.clientX - rect.left - ripple.offsetWidth / 2}px`;
+                    ripple.style.top = `${event.clientY - rect.top - ripple.offsetHeight / 2}px`;
+                    
+                    target.appendChild(ripple);
+
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600); // Match animation duration
+                }
+
+                function addEventListeners() {
+                    // Add ripple effect to all interactive elements
+                    const interactiveElements = document.querySelectorAll('.btn, .nav-item, .header-btn, .add-recipe-fab, .recipe-card, .group-card, .theme-option, .back-btn');
+                    interactiveElements.forEach(elem => elem.addEventListener('click', createRipple));
+
+                    dom.setup.btn.addEventListener('click', handleSetup);
+                    dom.navItems.forEach(item => item.addEventListener('click', handleNavClick));
+                    dom.main.settingsBtn.addEventListener('click', () => openModal(dom.modals.settings));
+                    dom.recipeView.backBtn.addEventListener('click', () => showScreen(state.previousScreen || 'main'));
+                    dom.main.addRecipeFab.addEventListener('click', () => openRecipeModal());
+                    dom.recipeForm.saveBtn.addEventListener('click', handleSaveRecipe);
+                    dom.recipeForm.deleteBtn.addEventListener('click', handleDeleteRecipe);
+                    dom.recipeForm.cancelBtn.addEventListener('click', () => closeModal(dom.modals.recipe));
+                    dom.recipeForm.imageInput.addEventListener('change', handleImageUpload);
+                    dom.recipeView.editBtn.addEventListener('click', () => {
+                        const recipe = state.recipes.find(r => r.id === state.activeRecipeId);
+                        if (recipe) openRecipeModal(recipe);
+                    });
+                    dom.groups.addBtn.addEventListener('click', () => openGroupModal());
+                    dom.groupForm.saveBtn.addEventListener('click', handleSaveGroup);
+                    dom.groupForm.cancelBtn.addEventListener('click', () => closeModal(dom.modals.group));
+                    dom.recipeView.addToShoppingBtn.addEventListener('click', addToShoppingList);
+                    dom.shopping.clearCheckedBtn.addEventListener('click', clearCheckedShoppingItems);
+                    dom.shopping.clearAllBtn.addEventListener('click', () => showConfirmation("هل أنت متأكد من مسح كل قائمة التسوق؟", clearAllShoppingItems));
+                    dom.search.btn.addEventListener('click', performSearch);
+                    dom.search.input.addEventListener('keydown', (e) => e.key === 'Enter' && performSearch());
+                    dom.recipeView.shareBtn.addEventListener('click', generateShareCard);
+                    dom.settingsForm.themeOptions.forEach(opt => opt.addEventListener('click', (e) => handleManualThemeSelection(e.currentTarget.dataset.theme)));
+                    dom.settingsForm.autoThemeToggle.addEventListener('change', handleAutoThemeToggle);
+                    dom.settingsForm.closeBtn.addEventListener('click', () => closeModal(dom.modals.settings));
+                }
+
+                function showScreen(screenKey) {
+                    if (state.currentScreen !== screenKey) state.previousScreen = state.currentScreen;
+                    state.currentScreen = screenKey;
+                    Object.values(dom.screens).forEach(s => s.classList.remove('active'));
+                    if(dom.screens[screenKey]) dom.screens[screenKey].classList.add('active');
+                    dom.navItems.forEach(item => item.classList.toggle('active', item.dataset.screen === screenKey));
+                    dom.main.addRecipeFab.style.display = screenKey === 'main' ? 'flex' : 'none';
+                }
+
+                function handleNavClick(e) {
+                    const targetScreen = e.currentTarget.dataset.screen;
+                    if (targetScreen) showScreen(targetScreen);
+                }
+                
+                function renderAll() {
+                    renderRecipes();
+                    renderGroups();
+                    renderShoppingList();
+                }
+
+                function renderRecipes(recipeList = state.recipes, container = dom.main.recipesGrid) {
+                    container.innerHTML = '';
+                    if (recipeList.length === 0 && container === dom.main.recipesGrid) {
+                        container.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;"><i class="ph ph-cooking-pot"></i><h3>كتاب الطبخ فارغ</h3><p>أضف وصفتك الأولى بالضغط على زر '+'</p></div>`;
+                        return;
+                    }
+                    recipeList.forEach(recipe => {
+                        const card = document.createElement('div');
+                        card.className = 'recipe-card';
+                        card.innerHTML = `<img src="${recipe.image || PLACEHOLDER_IMAGE}" alt="${recipe.title}"><h3 class="recipe-card-title">${recipe.title}</h3>`;
+                        card.addEventListener('click', () => viewRecipe(recipe.id));
+                        container.appendChild(card);
+                    });
+                }
+                
+                function viewRecipe(id) {
+                    const recipe = state.recipes.find(r => r.id === id);
+                    if (!recipe) return;
+                    state.activeRecipeId = id;
+                    dom.recipeView.img.src = recipe.image || PLACEHOLDER_IMAGE;
+                    dom.recipeView.title.textContent = recipe.title;
+                    dom.recipeView.ingredients.innerHTML = recipe.ingredients.map(i => `<li>${i}</li>`).join('');
+                    dom.recipeView.steps.innerHTML = recipe.steps.map(s => `<li>${s}</li>`).join('');
+                    showScreen('recipeView');
+                }
+
+                function renderGroups() {
+                    dom.groups.list.innerHTML = '';
+                    if (state.groups.length === 0) {
+                        dom.groups.list.innerHTML = `<div class="empty-state"><i class="ph ph-calendar-blank"></i><h3>لا توجد مناسبات بعد</h3><p>أنشئ مناسبات خاصة لتنظيم وصفاتك.</p></div>`;
+                    } else {
+                        state.groups.forEach(group => {
+                            const card = document.createElement('div');
+                            card.className = 'group-card';
+                            card.dataset.id = group.id;
+                            card.innerHTML = `<div class="group-card-info"><h3>${group.name}</h3><p>${state.recipes.filter(r => r.groupId === group.id).length} وصفة</p></div><div class="group-card-actions"><button class="edit-group-btn" title="تعديل"><i class="ph ph-pencil-simple"></i></button><button class="delete-group-btn" title="حذف"><i class="ph ph-trash"></i></button></div>`;
+                            dom.groups.list.appendChild(card);
+                        });
+                    }
+                    // Re-attach ripple listeners for dynamically created elements
+                    querySelAll('.group-card, .edit-group-btn, .delete-group-btn').forEach(elem => elem.addEventListener('click', createRipple));
+
+                    querySelAll('.group-card-info').forEach(c => c.addEventListener('click', e => {
+                        const groupId = e.currentTarget.closest('.group-card').dataset.id;
+                        const group = state.groups.find(g => g.id === groupId);
+                        // This part needs a proper screen to show recipes of a group, which is not fully implemented in the provided HTML.
+                        // For now, it won't navigate anywhere.
+                        showToast(`عرض وصفات "${group.name}"`);
+                    }));
+                    querySelAll('.edit-group-btn').forEach(b => b.addEventListener('click', e => openGroupModal(state.groups.find(g => g.id === e.currentTarget.closest('.group-card').dataset.id))));
+                    querySelAll('.delete-group-btn').forEach(b => b.addEventListener('click', e => {
+                        const groupId = e.currentTarget.closest('.group-card').dataset.id;
+                        showConfirmation("هل أنت متأكد من حذف هذه المناسبة؟ لن يتم حذف الوصفات بداخلها.", () => {
+                            state.recipes.forEach(recipe => { if (recipe.groupId === groupId) recipe.groupId = null; });
+                            db.set('recipes', state.recipes);
+                            state.groups = state.groups.filter(g => g.id !== groupId);
+                            db.set('groups', state.groups);
+                            renderAll();
+                            showToast("تم حذف المناسبة");
+                        });
+                    }));
+                    dom.recipeForm.groupSelect.innerHTML = '<option value="">بدون مناسبة</option>';
+                    state.groups.forEach(group => dom.recipeForm.groupSelect.innerHTML += `<option value="${group.id}">${group.name}</option>`);
+                }
+                
+                function renderShoppingList() {
+                    dom.shopping.list.innerHTML = '';
+                    if (state.shoppingList.length === 0) {
+                        dom.shopping.list.innerHTML = `<div class="empty-state"><i class="ph ph-shopping-cart"></i><h3>قائمة التسوق فارغة</h3><p>أضف مكونات من وصفاتك لتبدأ التسوق.</p></div>`;
+                    } else {
+                        state.shoppingList.forEach((item, index) => {
+                            const itemEl = document.createElement('div');
+                            itemEl.className = `shopping-item ${item.checked ? 'checked' : ''}`;
+                            itemEl.innerHTML = `<input type="checkbox" id="item-${index}" ${item.checked ? 'checked' : ''} data-index="${index}"><label for="item-${index}">${item.text}</label>`;
+                            itemEl.querySelector('input').addEventListener('change', e => {
+                                const idx = parseInt(e.target.dataset.index);
+                                state.shoppingList[idx].checked = e.target.checked;
+                                db.set('shoppingList', state.shoppingList);
+                                e.target.closest('.shopping-item').classList.toggle('checked', e.target.checked);
+                            });
+                            dom.shopping.list.appendChild(itemEl);
+                        });
+                    }
+                }
+
+                function handleSetup() {
+                    const name = dom.setup.input.value.trim();
+                    if (name) {
+                        db.setString('familyName', name);
+                        setupMainScreen(name);
+                    } else {
+                        showToast("الرجاء إدخال اسم لكتاب الطبخ");
+                    }
+                }
+
+                function handleSaveRecipe() {
+                    const title = dom.recipeForm.titleInput.value.trim();
+                    if (!title) return showToast("الرجاء إدخال اسم للطبق.");
+                    const id = dom.recipeForm.idInput.value;
+                    const recipeData = { id: id || Date.now().toString(), title, image: state.currentImageBase64, groupId: dom.recipeForm.groupSelect.value || null, ingredients: dom.recipeForm.ingredientsInput.value.trim().split('\n').filter(i => i), steps: dom.recipeForm.stepsInput.value.trim().split('\n').filter(s => s) };
+                    if (id) {
+                        const index = state.recipes.findIndex(r => r.id === id);
+                        if (index > -1) state.recipes[index] = recipeData;
+                    } else {
+                        state.recipes.push(recipeData);
+                    }
+                    db.set('recipes', state.recipes);
+                    renderAll();
+                    closeModal(dom.modals.recipe);
+                    showToast("تم حفظ الوصفة بنجاح");
+                }
+
+                function handleDeleteRecipe() {
+                    const id = dom.recipeForm.idInput.value;
+                    showConfirmation("هل أنت متأكد من حذف هذه الوصفة؟", () => {
+                        state.recipes = state.recipes.filter(r => r.id !== id);
+                        db.set('recipes', state.recipes);
+                        renderAll();
+                        closeModal(dom.modals.recipe);
+                        showScreen('main');
+                        showToast("تم حذف الوصفة");
+                    });
+                }
+                
+                function handleSaveGroup() {
+                    const name = dom.groupForm.nameInput.value.trim();
+                    if (!name) return showToast("الرجاء إدخال اسم للمناسبة.");
+                    const id = dom.groupForm.idInput.value;
+                    if (id) {
+                        const index = state.groups.findIndex(g => g.id === id);
+                        if (index > -1) state.groups[index].name = name;
+                    } else {
+                        state.groups.push({ id: Date.now().toString(), name });
+                    }
+                    db.set('groups', state.groups);
+                    renderGroups();
+                    closeModal(dom.modals.group);
+                    showToast("تم حفظ المناسبة بنجاح");
+                }
+
+                function addToShoppingList() {
+                    const recipe = state.recipes.find(r => r.id === state.activeRecipeId);
+                    if (!recipe) return;
+                    let itemsAdded = 0;
+                    recipe.ingredients.forEach(ingredient => {
+                        if (!state.shoppingList.some(item => item.text.trim() === ingredient.trim())) {
+                            state.shoppingList.push({ text: ingredient, checked: false });
+                            itemsAdded++;
+                        }
+                    });
+                    if (itemsAdded > 0) {
+                        db.set('shoppingList', state.shoppingList);
+                        renderShoppingList();
+                        showToast(`تم إضافة ${itemsAdded} مكون/مكونات`);
+                    } else {
+                        showToast("جميع المكونات موجودة بالفعل في القائمة");
+                    }
+                    showScreen('shoppingList');
+                }
+                
+                function clearCheckedShoppingItems() {
+                    state.shoppingList = state.shoppingList.filter(item => !item.checked);
+                    db.set('shoppingList', state.shoppingList);
+                    renderShoppingList();
+                    showToast("تم مسح العناصر المحددة");
+                }
+
+                function clearAllShoppingItems() {
+                    state.shoppingList = [];
+                    db.set('shoppingList', state.shoppingList);
+                    renderShoppingList();
+                    showToast("تم مسح القائمة بالكامل");
+                }
+
+                function performSearch() {
+                    const searchText = dom.search.input.value.trim().toLowerCase();
+                    if (!searchText) return renderRecipes([], dom.search.results);
+                    const searchTerms = searchText.split(/[،, ]+/).filter(term => term);
+                    const results = state.recipes.filter(recipe => {
+                        const recipeIngredientsLower = recipe.ingredients.join(' ').toLowerCase();
+                        return searchTerms.every(term => recipeIngredientsLower.includes(term));
+                    });
+                    renderRecipes(results, dom.search.results);
+                }
+
+                function generateShareCard() {
+                    const recipe = state.recipes.find(r => r.id === state.activeRecipeId);
+                    if (!recipe) return;
+                    const shareCardContent = `<img src="${recipe.image || PLACEHOLDER_IMAGE}" alt=""><h3 style="font-family: var(--font-title);">${recipe.title}</h3><h4>المكونات:</h4><ul>${recipe.ingredients.slice(0, 5).map(i => `<li>${i}</li>`).join('')}</ul>`;
+                    dom.shareCard.innerHTML = shareCardContent;
+                    html2canvas(dom.shareCard).then(canvas => {
+                        const link = document.createElement('a');
+                        link.href = canvas.toDataURL('image/png');
+                        link.download = `${recipe.title.replace(/\s+/g, '_')}_بطاقة.png`;
+                        link.click();
+                    }).catch(err => showToast("حدث خطأ أثناء إنشاء الصورة."));
+                }
+
+                function handleImageUpload(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => state.currentImageBase64 = event.target.result;
+                        reader.readAsDataURL(file);
+                    }
+                }
+
+                function openModal(modal) { modal.classList.add('active'); }
+                function closeModal(modal) { modal.classList.remove('active'); }
+
+                function openRecipeModal(recipe = null) {
+                    openModal(dom.modals.recipe);
+                    renderGroups();
+                    if (recipe) {
+                        dom.recipeForm.title.textContent = "تعديل الوصفة";
+                        dom.recipeForm.idInput.value = recipe.id;
+                        dom.recipeForm.titleInput.value = recipe.title;
+                        dom.recipeForm.groupSelect.value = recipe.groupId || '';
+                        dom.recipeForm.ingredientsInput.value = recipe.ingredients.join('\n');
+                        dom.recipeForm.stepsInput.value = recipe.steps.join('\n');
+                        state.currentImageBase64 = recipe.image;
+                        dom.recipeForm.deleteBtn.style.display = 'block';
+                    } else {
+                        dom.recipeForm.title.textContent = "إضافة وصفة جديدة";
+                        dom.recipeForm.idInput.value = '';
+                        dom.recipeForm.titleInput.value = '';
+                        dom.recipeForm.groupSelect.value = '';
+                        dom.recipeForm.ingredientsInput.value = '';
+                        dom.recipeForm.stepsInput.value = '';
+                        state.currentImageBase64 = null;
+                        dom.recipeForm.imageInput.value = ''; 
+                        dom.recipeForm.deleteBtn.style.display = 'none';
+                    }
+                }
+
+                function openGroupModal(group = null) {
+                    openModal(dom.modals.group);
+                    if (group) {
+                        dom.groupForm.title.textContent = "تعديل المناسبة";
+                        dom.groupForm.idInput.value = group.id;
+                        dom.groupForm.nameInput.value = group.name;
+                    } else {
+                        dom.groupForm.title.textContent = "إضافة مناسبة جديدة";
+                        dom.groupForm.idInput.value = '';
+                        dom.groupForm.nameInput.value = '';
+                    }
+                }
+
+                function getThemeForCurrentHour() {
+                    const hour = new Date().getHours();
+                    if (hour >= 5 && hour < 12) return 'dawn';
+                    if (hour >= 12 && hour < 15) return 'oasis';
+                    if (hour >= 15 && hour < 18) return 'sunset';
+                    return 'midnight';
+                }
+
+                function applyTheme(theme) {
+                    dom.mobileContainer.className = `mobile-container theme-${theme}`;
+                    dom.settingsForm.themeOptions.forEach(opt => opt.classList.toggle('active', opt.dataset.theme === theme));
+                }
+
+                function handleManualThemeSelection(theme) {
+                    applyTheme(theme);
+                    db.setString('manualTheme', theme);
+                    db.setString('autoThemeEnabled', 'false');
+                    dom.settingsForm.autoThemeToggle.checked = false;
+                }
+
+                function handleAutoThemeToggle(e) {
+                    const isEnabled = e.target.checked;
+                    db.setString('autoThemeEnabled', isEnabled.toString());
+                    if (isEnabled) {
+                        applyTheme(getThemeForCurrentHour());
+                    }
+                }
+
+                function showToast(message) {
+                    dom.toast.textContent = message;
+                    dom.toast.classList.add('show');
+                    setTimeout(() => dom.toast.classList.remove('show'), 2500);
+                }
+
+                function showConfirmation(message, onConfirm) {
+                    dom.confirmForm.message.textContent = message;
+                    openModal(dom.modals.confirm);
+                    const handleConfirm = () => { onConfirm(); hideConfirmation(); };
+                    const hideConfirmation = () => {
+                        closeModal(dom.modals.confirm);
+                        dom.confirmForm.okBtn.removeEventListener('click', handleConfirm);
+                        dom.confirmForm.cancelBtn.removeEventListener('click', hideConfirmation);
+                    };
+                    dom.confirmForm.okBtn.addEventListener('click', handleConfirm, { once: true });
+                    dom.confirmForm.cancelBtn.addEventListener('click', hideConfirmation, { once: true });
+                }
+
+                init();
+            });
+        })();
+    </script>
+</body>
+</html>
